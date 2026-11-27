@@ -2962,6 +2962,7 @@ function Documents({ data, notify, openTaskModal }) {
                     )
                   ) : previewDoc.mimeType?.includes("image") ? (
                     previewBlobUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element -- Runtime blob: object URLs cannot be statically optimized by next/image */
                       <img
                         src={previewBlobUrl}
                         alt={previewDoc.filename}
