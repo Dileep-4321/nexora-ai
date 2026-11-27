@@ -1,0 +1,27 @@
+{
+  "name": "nexora-ai",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint app lib",
+    "test:backend": "npm --prefix projectpulse-ai/backend test",
+    "lint:backend": "npm --prefix projectpulse-ai/backend run lint",
+    "seed:demo": "npm --prefix projectpulse-ai/backend run seed:demo",
+    "clear-data": "npm --prefix projectpulse-ai/backend run clear-data",
+    "inspect-db": "npm --prefix projectpulse-ai/backend run inspect-db"
+  },
+  "dependencies": {
+    "next": "^16.3.6",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "socket.io-client": "^4.8.4"
+  },
+  "devDependencies": {
+    "eslint": "9.39.1",
+    "eslint-config-next": "^16.3.6",
+    "puppeteer-core": "^25.18.1"
+  }
+}

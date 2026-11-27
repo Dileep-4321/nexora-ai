@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.env
+.env.local
+.env.*.local
+projectpulse-ai/backend/.env
+projectpulse-ai/backend/uploads/
+*.log
+*.bak*
+.DS_Store
+.vscode/
