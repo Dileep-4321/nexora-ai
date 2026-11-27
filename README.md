@@ -178,6 +178,25 @@ node --test --test-force-exit tests/realtime.test.js
 
 > **Note:** Three integration suites (`balanced-master-upgrade.test.js`, `employee-management.test.js`, `master-enterprise-upgrade.test.js`) send HTTP requests to `http://localhost:5001` and require the backend server to be running locally.
 
+## Feature Walkthrough
+
+1. Sign in as **Project Manager** (`dileep@nexora.ai` / `Password123!`) to inspect portfolio health, budget/schedule metrics, critical-path Gantt dependencies, and active delay forecasts.
+2. Open **AI Insights & Workload Rebalance** to review explainable bottleneck causes (`delivery_delay`, `resource_saturation`, `dependency_blocker`, `stuck_in_progress`, `milestone_risk`) and approve or dismiss human-in-the-loop reassignment proposals.
+3. Open **Employees** to filter staff by skill, onboard new team members with auto-generated `NEX-XXXX` IDs, or verify dependency-safe deactivation with task reassignment.
+4. Sign in as **Client** (`client@nexora.ai`) to verify the backend confidentiality firewall masking internal developer identities, hourly allocations, and private discussions.
+
+## Database Setup & Indexing
+
+- Local development targets MongoDB (`mongodb://127.0.0.1:27017/nexora_ai_demo`) configured via `projectpulse-ai/backend/.env`.
+- Mongoose schemas enforce unique/sparse indexes on `User.email` and `User.employeeId`, and scoped query lookups across projects, tasks, milestones, comments, notifications, and audit logs.
+- Run `npm run seed:demo` to initialize a clean demo database, or `npm run seed:demo -- --reset` to wipe and re-seed `nexora_ai_demo` safely.
+
+## Troubleshooting
+
+- **`Database connection unavailable` on `/api/v1/health`:** Confirm MongoDB is running (`mongosh --eval "db.adminCommand('ping')"` or `brew services start mongodb-community`).
+- **Integration tests fail with `fetch failed`:** Start the Express API server (`npm run dev --prefix projectpulse-ai/backend`) before executing `balanced-master-upgrade.test.js`, `employee-management.test.js`, or `master-enterprise-upgrade.test.js`.
+- **Port already in use (`3000` or `5001`):** Run `./stop.sh` to clear stale local frontend/backend processes cleanly.
+
 ## Future Enhancements
 
 - Add CI workflow (GitHub Actions) with an ephemeral MongoDB service container.
