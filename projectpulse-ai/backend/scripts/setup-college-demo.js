@@ -139,16 +139,19 @@ async function seedCollegeDemo() {
 
   console.info('Creating 14 synthetic users with hashed passwords...');
   const userMap = {};
+  let empCounter = 1001;
   for (const u of DEMO_USERS) {
     const user = await User.create({
       name: u.name,
       email: u.email,
       password, // Password hashed automatically by User model pre-save hook
       role: u.role,
+      employeeId: u.role === 'client' ? undefined : `NEX-${empCounter++}`,
       jobTitle: u.jobTitle,
       department: u.department,
-      availability: u.availability,
-      capacity: u.capacity,
+      skills: u.skills,
+      availabilityStatus: u.availability,
+      workloadCapacity: u.capacity,
       isActive: true
     });
     userMap[u.name] = user;
