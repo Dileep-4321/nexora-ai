@@ -2,12 +2,8 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { fileURLToPath } from 'url';
 import { User, Project, Task, Comment, Attachment, Notification } from '../src/models/index.js';
 import { UPLOADS_DIR } from '../src/services/collaboration.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function seedCommunicationDemo() {
   await mongoose.connect('mongodb://localhost:27017/nexora_ai_demo');
@@ -16,7 +12,6 @@ async function seedCommunicationDemo() {
   const pm = await User.findOne({ email: 'dileep@nexora.ai' });
   const lead = await User.findOne({ email: 'sohel@nexora.ai' });
   const member = await User.findOne({ email: 'hema@nexora.ai' });
-  const punith = await User.findOne({ email: 'punith@nexora.ai' });
   const client = await User.findOne({ email: 'client@nexora.ai' });
 
   if (!pm || !lead || !member || !client) {
@@ -26,11 +21,9 @@ async function seedCommunicationDemo() {
 
   const projects = await Project.find({});
   const p1 = projects.find(p => p.name === 'Enterprise Core Migration') || projects[0];
-  const p2 = projects.find(p => p.name === 'Mobile App Suite v2') || projects[1];
 
   const tasksP1 = await Task.find({ project: p1._id });
   const taskDb = tasksP1.find(t => t.title.includes('Database Replica')) || tasksP1[0];
-  const taskSocket = tasksP1.find(t => t.title.includes('Socket.IO')) || tasksP1[1];
   const taskClient = tasksP1.find(t => t.title.includes('Client Deliverables')) || tasksP1[2];
 
   // 1. SEED COMMENTS / DISCUSSIONS (only if count is 0)

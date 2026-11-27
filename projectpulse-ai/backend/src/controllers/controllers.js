@@ -974,7 +974,7 @@ export async function updateAttachmentMetadataHandler(req, res) {
 
 export async function previewAttachmentHandler(req, res) {
   requireId(req.params.attachmentId);
-  const { attachment, filePath, mimeType, filename } = await getAttachmentForPreview({
+  const { filePath, mimeType, filename } = await getAttachmentForPreview({
     attachmentId: req.params.attachmentId,
     user: req.user
   });

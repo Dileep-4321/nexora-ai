@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'nexora-ai-local-secret-2026-projec
 
 let pmUser, leadUser, memberUser, clientUser, otherUser;
 let pmToken, leadToken, memberToken, clientToken, otherToken;
-let testProject, testTask;
+let testProject;
 
 function makeToken(user) {
   return jwt.sign(
@@ -99,7 +99,7 @@ test.before(async () => {
     status: 'active'
   });
 
-  testTask = await Task.create({
+  await Task.create({
     title: 'Deliverable Architecture Review',
     project: testProject._id,
     assignedTo: memberUser._id,
@@ -126,7 +126,6 @@ test.after(async () => {
 
 test('Advanced Discussion, Notification & Document Management Test Suite', async (t) => {
   let createdCommentId;
-  let replyCommentId;
   let createdAttachmentId;
 
   await t.test('1. Discussion: Create project-wide message and verify mention autocomplete', async () => {
@@ -167,7 +166,6 @@ test('Advanced Discussion, Notification & Document Management Test Suite', async
     assert.equal(replyRes.status, 201);
     const reply = replyRes.data.data.comment;
     assert.ok(reply._id);
-    replyCommentId = reply._id;
     assert.equal(String(reply.parentComment._id || reply.parentComment), String(createdCommentId));
 
     // Verify reply notification was delivered to PM

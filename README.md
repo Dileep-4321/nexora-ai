@@ -9,6 +9,7 @@ A full-stack, real-time Project Management SaaS platform built with **Next.js 16
 ![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose_8-4EA94B?style=flat-square&logo=mongodb&logoColor=white)
 ![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-010101?style=flat-square&logo=socketdotio&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+![CI](https://github.com/Dileep-4321/nexora-ai/actions/workflows/ci.yml/badge.svg)
 
 ---
 
@@ -163,9 +164,9 @@ Open [http://localhost:3000](http://localhost:3000). Health endpoint: [http://lo
 | Client | `client@nexora.ai` |
 | Administrator | `admin@nexora.ai` |
 
-## Automated Testing
+## Automated Testing & CI
 
-The backend includes **15 automated Node test suites** covering RBAC, client confidentiality firewall, Socket.IO room isolation, Gantt/timeline calculations, analytics, hardening, and AI forecasting:
+The backend includes **15 automated Node test suites** (**15 / 15 suites passing — 148 passed, 0 failed**) covering RBAC, client confidentiality firewall, Socket.IO room isolation, Gantt/timeline calculations, analytics, security hardening, and AI forecasting, automatically verified in GitHub Actions alongside frontend ESLint and Next.js production builds:
 
 ```bash
 # Run individual suite against seeded MongoDB:

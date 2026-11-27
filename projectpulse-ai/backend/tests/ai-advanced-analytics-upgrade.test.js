@@ -8,7 +8,7 @@ import express from 'express';
 import cors from 'cors';
 import router from '../src/routes/index.js';
 import { errorHandler } from '../src/middleware/errors.js';
-import { User, Project, Task } from '../src/models/index.js';
+import { User, Project } from '../src/models/index.js';
 import {
   predictProjectDelay,
   getSprintIntelligence,

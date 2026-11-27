@@ -1,0 +1,93 @@
+name: NEXORA AI CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend-lint-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend ESLint
+        run: npm run lint
+
+      - name: Run Next.js production build
+        env:
+          NEXT_PUBLIC_NEXORA_API_URL: http://localhost:5001/api/v1
+        run: npm run build
+
+  backend-lint-and-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PORT: "5001"
+      MONGODB_URI: mongodb://127.0.0.1:27017/nexora_ai_demo
+      JWT_SECRET: nexora-ai-local-secret-2026-project
+      NODE_ENV: test
+      CLIENT_URL: http://localhost:3000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: projectpulse-ai/backend/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci --prefix projectpulse-ai/backend
+
+      - name: Run backend ESLint
+        run: npm run lint:backend
+
+      - name: Seed isolated demo database
+        run: npm run seed:demo
+
+      - name: Start backend server and run all 15 test suites
+        working-directory: projectpulse-ai/backend
+        run: |
+          node src/server.js >/tmp/nexora-ci-server.log 2>&1 &
+          SRV_PID=$!
+          trap "kill $SRV_PID 2>/dev/null || true" EXIT
+
+          for i in $(seq 1 20); do
+            if curl -sf http://127.0.0.1:5001/api/v1/health >/dev/null; then
+              echo "Backend API healthy"
+              break
+            fi
+            sleep 1
+          done
+
+          for f in tests/*.test.js; do
+            echo "=== Running $f ==="
+            node --test --test-force-exit "$f"
+          done

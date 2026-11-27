@@ -10,6 +10,7 @@ import router from '../src/routes/index.js';
 import { errorHandler } from '../src/middleware/errors.js';
 import { User, Project } from '../src/models/index.js';
 import {
+  BOTTLENECK_TYPES,
   predictTaskDelays,
   calculateWorkloadRebalance,
   detectProjectBottlenecks,
@@ -117,7 +118,7 @@ test('Advanced AI & Machine Learning Enhancements Suite', async (t) => {
     assert.ok(diagnosis.healthExplanation, 'Health explanation string must be present');
 
     for (const b of diagnosis.bottlenecks) {
-      assert.ok(['delivery_delay', 'resource_saturation', 'milestone_risk'].includes(b.type));
+      assert.ok(BOTTLENECK_TYPES.includes(b.type), `Unexpected bottleneck type: ${b.type}`);
       assert.ok(['low', 'medium', 'high', 'critical'].includes(b.severity));
       assert.ok(b.title && b.description && b.impact && b.recommendedAction);
     }

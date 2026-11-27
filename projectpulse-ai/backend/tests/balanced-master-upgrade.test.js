@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { User, Project, Task, Milestone } from '../src/models/index.js';
+import { User, Project, Task } from '../src/models/index.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'nexora-ai-local-secret-2026-project';
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/nexora_ai_demo';
@@ -17,22 +17,18 @@ function signToken(user) {
 }
 
 test('NEXORA Balanced Master Enterprise Upgrade Test Suite', async (t) => {
-  let pmUser, leadUser, memberUser, clientUser, project;
-  let pmToken, leadToken, memberToken, clientToken;
+  let pmUser, clientUser, project;
+  let pmToken, clientToken;
 
   t.before(async () => {
     if (mongoose.connection.readyState !== 1) {
       await mongoose.connect(MONGO_URI);
     }
     pmUser = await User.findOne({ role: 'project_manager', isActive: true });
-    leadUser = await User.findOne({ role: 'team_lead', isActive: true });
-    memberUser = await User.findOne({ role: 'team_member', isActive: true });
     clientUser = await User.findOne({ role: 'client', isActive: true });
     project = await Project.findOne();
 
     pmToken = signToken(pmUser);
-    leadToken = signToken(leadUser);
-    memberToken = signToken(memberUser);
     clientToken = signToken(clientUser);
   });
 

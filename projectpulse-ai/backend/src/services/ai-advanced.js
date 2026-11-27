@@ -8,14 +8,20 @@ import {
   Notification,
   TaskAssignmentHistory
 } from '../models/index.js';
-import { calculateProjectMetrics, workloadFor, performanceFor } from './metrics.js';
+import { calculateProjectMetrics, workloadFor } from './metrics.js';
 import {
   emitNotification,
   emitActivity,
-  emitTaskAssigned,
-  emitTaskUpdated,
-  emitWorkloadUpdated
+  emitTaskAssigned
 } from './realtime.js';
+
+export const BOTTLENECK_TYPES = [
+  'delivery_delay',
+  'resource_saturation',
+  'dependency_blocker',
+  'stuck_in_progress',
+  'milestone_risk'
+];
 
 /**
  * Standard productive working hours per day per developer
@@ -185,7 +191,6 @@ export async function predictProjectDelay(projectId) {
 
   const tasks = await Task.find({ project: projectId })
     .populate('assignedTo', 'name email role availabilityStatus productivityScore workloadCapacity');
-  const milestones = await Milestone.find({ project: projectId }).sort({ dueDate: 1 });
 
   const now = new Date();
   const completedTasks = tasks.filter((t) => t.status === 'completed');
@@ -486,7 +491,7 @@ export async function detectProjectBottlenecks(projectId) {
       type: 'stuck_in_progress',
       severity: 'medium',
       title: `${stuckTasks.length} Task(s) In-Progress with Slow Velocity`,
-      description: `Tasks [${stuckTasks.map((t) => `"${t.title}"`).slice(0, 2).join(', ')}] have had limited progress progress updates for over 5 days.`,
+      description: `Tasks [${stuckTasks.map((t) => `"${t.title}"`).slice(0, 2).join(', ')}] have had limited progress updates for over 5 days.`,
       impact: 'Hidden delivery friction that may cause last-minute milestone delay.',
       affectedTasks: stuckTasks.map((t) => t.title),
       recommendedAction: 'Conduct quick standup check-in with assigned engineer to uncover impediments.'
@@ -630,7 +635,7 @@ export async function getProjectAIAssistant(projectId, userRole = 'project_manag
  * @param {string} projectId
  * @param {object} user
  */
-export async function getSprintIntelligence(projectId, user) {
+export async function getSprintIntelligence(projectId, _user) {
   const project = await Project.findById(projectId).populate('teamMembers', 'name email role skills availabilityStatus');
   if (!project) throw Object.assign(new Error('Project not found'), { status: 404 });
 
@@ -879,9 +884,8 @@ export async function getClientDeliveryIntelligence(projectId, clientUser) {
     throw Object.assign(new Error('Access denied to project delivery telemetry'), { status: 403 });
   }
 
-  const [milestones, tasks, metrics] = await Promise.all([
+  const [milestones, metrics] = await Promise.all([
     Milestone.find({ project: projectId }).sort({ dueDate: 1 }),
-    Task.find({ project: projectId, isPublicToClient: true }),
     calculateProjectMetrics(projectId, false)
   ]);
 

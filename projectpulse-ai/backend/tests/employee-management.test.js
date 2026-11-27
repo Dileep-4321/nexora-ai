@@ -42,7 +42,6 @@ async function runTests() {
   // Tokens
   const pmToken = await login('pm@nexora.ai');
   const tlToken = await login('lead@nexora.ai');
-  const tmToken = await login('member@nexora.ai');
   const clientToken = await login('client@nexora.ai');
 
   // Test 1: Client is forbidden from accessing /employees

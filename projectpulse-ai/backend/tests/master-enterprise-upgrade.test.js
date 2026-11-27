@@ -48,11 +48,9 @@ async function runTests() {
     const pmLogin = await api('/auth/login', 'POST', { email: 'pm@nexora.ai', password: 'Password123!' });
     assert.equal(pmLogin.status, 200, 'PM Login status');
     const pmToken = pmLogin.data.data.token;
-    const pmUser = pmLogin.data.data.user;
 
     const tlLogin = await api('/auth/login', 'POST', { email: 'lead@nexora.ai', password: 'Password123!' });
     assert.equal(tlLogin.status, 200, 'TL Login status');
-    const tlToken = tlLogin.data.data.token;
 
     const tmLogin = await api('/auth/login', 'POST', { email: 'member@nexora.ai', password: 'Password123!' });
     assert.equal(tmLogin.status, 200, 'TM Login status');
